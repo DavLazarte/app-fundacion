@@ -3,8 +3,8 @@ import type { Metadata, Viewport } from 'next'
 import './globals.css'
 
 export const metadata: Metadata = {
-  title: 'Tesorería | Fundación Sur',
-  description: 'Gestión clara y segura de fondos, movimientos y grupos de Fundación Sur.',
+  title: 'Tesorería | Fundación',
+  description: 'Gestión clara y segura de fondos y movimientos de la fundación.',
   generator: 'v0.app',
   icons: {
     icon: [
@@ -37,7 +37,7 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="es-AR">
+    <html lang="es-AR" suppressHydrationWarning>
       <body className="antialiased">
         {children}
         {process.env.NODE_ENV === 'production' && <Analytics />}
