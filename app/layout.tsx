@@ -5,9 +5,13 @@ import './globals.css'
 export const metadata: Metadata = {
   title: 'Tesorería | Fundación',
   description: 'Gestión clara y segura de fondos y movimientos de la fundación.',
-  generator: 'v0.app',
+  manifest: '/manifest.json',
   icons: {
     icon: [
+      {
+        url: '/icon.svg',
+        type: 'image/svg+xml',
+      },
       {
         url: '/icon-light-32x32.png',
         media: '(prefers-color-scheme: light)',
@@ -16,10 +20,6 @@ export const metadata: Metadata = {
         url: '/icon-dark-32x32.png',
         media: '(prefers-color-scheme: dark)',
       },
-      {
-        url: '/icon.svg',
-        type: 'image/svg+xml',
-      },
     ],
     apple: '/apple-icon.png',
   },
@@ -27,8 +27,11 @@ export const metadata: Metadata = {
 
 export const viewport: Viewport = {
   colorScheme: 'light',
-  userScalable: true,
-  themeColor: '#f7f9f8',
+  userScalable: false,
+  initialScale: 1,
+  maximumScale: 1,
+  width: 'device-width',
+  themeColor: '#0d6b5e',
 }
 
 export default function RootLayout({

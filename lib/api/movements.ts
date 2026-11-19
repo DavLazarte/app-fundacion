@@ -2,6 +2,7 @@ import { serverFetch } from '@/lib/api/client'
 import {
   Category,
   Entity,
+  EntityType,
   Movement,
   MovementAttachment,
   PaginatedResponse,
@@ -43,14 +44,17 @@ export async function getMovement(id: number | string): Promise<{ data: Movement
 export async function getMovementCatalogs(): Promise<{
   categories: Category[]
   entities: Entity[]
+  entityTypes: EntityType[]
 }> {
-  const [categoriesRes, entitiesRes] = await Promise.all([
+  const [categoriesRes, entitiesRes, entityTypesRes] = await Promise.all([
     serverFetch<{ data: Category[] }>('/categories?is_active=1'),
     serverFetch<{ data: Entity[] }>('/entities?is_active=1&per_page=100'),
+    serverFetch<{ data: EntityType[] }>('/entity-types?is_active=1'),
   ])
 
   return {
     categories: categoriesRes.data || [],
     entities: entitiesRes.data || [],
+    entityTypes: entityTypesRes.data || [],
   }
 }

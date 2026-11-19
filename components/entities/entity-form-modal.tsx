@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { Entity, EntityType } from '@/types/api'
 import { Button } from '@/components/ui/button'
@@ -11,7 +11,7 @@ interface EntityFormModalProps {
   entityTypes: EntityType[]
   isOpen: boolean
   onClose: () => void
-  onSuccess: () => void
+  onSuccess: (createdEntity?: Entity) => void
 }
 
 export function EntityFormModal({
@@ -37,6 +37,27 @@ export function EntityFormModal({
 
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
+
+  useEffect(() => {
+    if (isOpen) {
+      setName(entity?.name || '')
+      setEntityTypeId(
+        entity?.entity_type_id
+          ? String(entity.entity_type_id)
+          : entityTypes[0]?.id
+          ? String(entityTypes[0].id)
+          : ''
+      )
+      setDocumentNumber(entity?.document_number || '')
+      setPhone(entity?.phone || '')
+      setEmail(entity?.email || '')
+      setAddress(entity?.address || '')
+      setNotes(entity?.notes || '')
+      setIsActive(entity ? entity.is_active : true)
+      setError(null)
+      setLoading(false)
+    }
+  }, [isOpen, entity, entityTypes])
 
   if (!isOpen) return null
 
@@ -75,7 +96,7 @@ export function EntityFormModal({
       }
 
       setLoading(false)
-      onSuccess()
+      onSuccess(data.data)
       onClose()
       router.refresh()
     } catch {

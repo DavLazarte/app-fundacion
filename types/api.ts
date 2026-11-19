@@ -79,6 +79,30 @@ export interface MovementAttachment {
   created_at: string
 }
 
+export interface AccountabilityAttachment {
+  id: number
+  accountability_id: number
+  original_name: string
+  mime_type: string
+  size_bytes: number
+  sha256: string
+  uploader?: User
+  download_url: string | null
+  created_at: string
+}
+
+export interface MovementAccountability {
+  id: number
+  movement_id: number
+  movement?: Movement
+  rendered_at: string
+  amount: string | null
+  description: string
+  creator?: User
+  attachments?: AccountabilityAttachment[]
+  created_at: string
+}
+
 export interface MovementVoid {
   reason: string
   voided_at: string
@@ -105,7 +129,19 @@ export interface Movement {
   is_voided: boolean
   void?: MovementVoid | null
   attachments?: MovementAttachment[]
+  accountabilities?: MovementAccountability[]
+  accountabilities_count?: number
   created_at: string
+}
+
+export interface DashboardTopEntity {
+  id: number
+  name: string
+  type: string
+  delivered: string
+  rendered: string
+  pending: string
+  movements_count: number
 }
 
 export interface DashboardMetrics {
@@ -114,6 +150,8 @@ export interface DashboardMetrics {
   month: {
     incomes: string
     expenses: string
+    rendered?: string
+    pending_count?: number
   }
   monthly: Array<{
     month: string
@@ -124,6 +162,7 @@ export interface DashboardMetrics {
     type: string
     amount: string
   }>
+  top_entities?: DashboardTopEntity[]
   latest_movements: Movement[]
 }
 

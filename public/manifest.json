@@ -1,0 +1,25 @@
+{
+  "name": "Tesorería — Fundación",
+  "short_name": "Tesorería",
+  "description": "Plataforma de gestión de tesorería, movimientos de fondos y rendición de cuentas.",
+  "start_url": "/dashboard",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#f7f9f8",
+  "theme_color": "#0d6b5e",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/apple-icon.png",
+      "sizes": "180x180",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ]
+}

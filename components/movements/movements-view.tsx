@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
-import { Category, Entity, Movement, PaginatedResponse } from '@/types/api'
+import { Category, Entity, EntityType, Movement, PaginatedResponse } from '@/types/api'
 import { formatCurrency, formatDate } from '@/lib/format'
 import { Button } from '@/components/ui/button'
 import { NewMovementModal } from './new-movement-modal'
@@ -23,6 +23,7 @@ interface MovementsViewProps {
   initialData: PaginatedResponse<Movement>
   categories: Category[]
   entities: Entity[]
+  entityTypes?: EntityType[]
   currentBalance: string
   canCreate: boolean
   canVoid: boolean
@@ -32,6 +33,7 @@ export function MovementsView({
   initialData,
   categories,
   entities,
+  entityTypes = [],
   currentBalance,
   canCreate,
   canVoid,
@@ -232,9 +234,93 @@ export function MovementsView({
         </div>
       )}
 
-      {/* Tabla de movimientos */}
+      {/* Lista / Tabla de movimientos */}
       <div className="overflow-hidden rounded-2xl border border-[#e1ebe7] bg-white shadow-sm">
-        <div className="overflow-x-auto">
+        {/* Vista en Tarjetas para Móviles (sin scroll lateral incómodo) */}
+        <div className="divide-y divide-[#f0f3f2] md:hidden">
+          {movements.length === 0 ? (
+            <div className="p-8 text-center text-xs text-[#8c9e99]">
+              No se encontraron movimientos registrados con los filtros aplicados.
+            </div>
+          ) : (
+            movements.map((m) => {
+              const isIncome = m.type === 'ingreso'
+              const isVoided = m.is_voided
+
+              return (
+                <div
+                  key={m.id}
+                  onClick={() => setSelectedMovement(m)}
+                  className={cn(
+                    'flex cursor-pointer flex-col gap-2 p-4 transition-colors active:bg-[#f6faf8]',
+                    isVoided && 'bg-[#fefbfb] opacity-60'
+                  )}
+                >
+                  <div className="flex items-center justify-between text-xs">
+                    <span className="font-medium text-[#70817c]">
+                      {formatDate(m.movement_date)}
+                    </span>
+                    <div className="flex items-center gap-1.5">
+                      {isVoided ? (
+                        <span className="rounded-md bg-red-100 px-2 py-0.5 text-[10px] font-bold text-red-700">
+                          ANULADO
+                        </span>
+                      ) : (
+                        <span
+                          className={cn(
+                            'rounded-md px-2 py-0.5 text-[10px] font-semibold',
+                            isIncome
+                              ? 'bg-[#e8f5f0] text-[#267560]'
+                              : 'bg-[#faeee9] text-[#ae6548]'
+                          )}
+                        >
+                          {isIncome ? 'Ingreso' : 'Egreso'}
+                        </span>
+                      )}
+                      {!isIncome && m.accountabilities && m.accountabilities.length > 0 && (
+                        <span className="rounded-sm bg-emerald-50 px-1.5 py-0.5 text-[10px] font-semibold text-emerald-700">
+                          Rendido ({m.accountabilities.length})
+                        </span>
+                      )}
+                    </div>
+                  </div>
+
+                  <div className="flex items-start justify-between gap-3">
+                    <div className="min-w-0 flex-1">
+                      <p className={cn('text-sm font-semibold text-[#1e3934]', isVoided && 'line-through')}>
+                        {m.concept}
+                      </p>
+                      <p className="mt-0.5 truncate text-xs text-[#71827e]">
+                        {m.category?.name || 'Sin categoría'} • {m.entity?.name || 'Gasto directo'}
+                      </p>
+                      {m.reference && (
+                        <p className="font-mono text-[10px] text-[#91a09c]">
+                          Ref: {m.reference}
+                        </p>
+                      )}
+                    </div>
+                    <div
+                      className={cn(
+                        'whitespace-nowrap text-right text-base font-bold',
+                        isVoided
+                          ? 'text-gray-400 line-through'
+                          : isIncome
+                          ? 'text-[#287b68]'
+                          : 'text-[#b76547]'
+                      )}
+                    >
+                      {isIncome ? '+ ' : '− '}
+                      {formatCurrency(m.amount)}
+                    </div>
+                  </div>
+                </div>
+              )
+            })
+          )}
+        </div>
+
+        {/* Tabla para Tablet y Desktop */}
+        <div className="hidden overflow-x-auto md:block">
           <table className="w-full min-w-[850px] text-left">
             <thead>
               <tr className="border-b border-[#edf1ef] bg-[#fafcfb] text-xs uppercase tracking-wider text-[#93a29e]">
@@ -312,16 +398,23 @@ export function MovementsView({
                             ANULADO
                           </span>
                         ) : (
-                          <span
-                            className={cn(
-                              'rounded-md px-2 py-0.5 text-[11px] font-semibold',
-                              isIncome
-                                ? 'bg-[#e8f5f0] text-[#267560]'
-                                : 'bg-[#faeee9] text-[#ae6548]'
+                          <div className="flex flex-col items-start gap-1">
+                            <span
+                              className={cn(
+                                'rounded-md px-2 py-0.5 text-[11px] font-semibold',
+                                isIncome
+                                  ? 'bg-[#e8f5f0] text-[#267560]'
+                                  : 'bg-[#faeee9] text-[#ae6548]'
+                              )}
+                            >
+                              {isIncome ? 'Ingreso' : 'Egreso'}
+                            </span>
+                            {!isIncome && (m.accountabilities && m.accountabilities.length > 0) && (
+                              <span className="inline-flex items-center rounded-sm bg-emerald-50 px-1.5 py-0.5 text-[10px] font-semibold text-emerald-700">
+                                Rendido ({m.accountabilities.length})
+                              </span>
                             )}
-                          >
-                            {isIncome ? 'Ingreso' : 'Egreso'}
-                          </span>
+                          </div>
                         )}
                       </td>
                       <td
@@ -391,6 +484,7 @@ export function MovementsView({
         currentBalance={currentBalance}
         categories={categories}
         entities={entities}
+        entityTypes={entityTypes}
         isOpen={isNewModalOpen}
         onClose={() => setIsNewModalOpen(false)}
         onSuccess={() => {
@@ -405,6 +499,7 @@ export function MovementsView({
         onClose={() => setSelectedMovement(null)}
         onVoidClick={(m) => setVoidTarget(m)}
         canVoid={canVoid}
+        canCreate={canCreate}
       />
 
       <VoidMovementModal

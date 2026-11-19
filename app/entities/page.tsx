@@ -1,7 +1,8 @@
 import { getMe } from '@/lib/api/auth'
 import { getEntities, getEntityTypes } from '@/lib/api/entities'
+import { getCategories } from '@/lib/api/categories'
 import { AppLayout } from '@/components/layout/app-layout'
-import { EntitiesView } from '@/components/entities/entities-view'
+import { EntitiesAndCategoriesTabs } from '@/components/entities/entities-and-categories-tabs'
 import { redirect } from 'next/navigation'
 
 interface PageProps {
@@ -10,6 +11,7 @@ interface PageProps {
     is_active?: string
     q?: string
     page?: string
+    tab?: string
   }>
 }
 
@@ -22,7 +24,7 @@ export default async function EntitiesPage({ searchParams }: PageProps) {
 
   const params = await searchParams
 
-  const [entitiesData, entityTypesRes] = await Promise.all([
+  const [entitiesData, entityTypesRes, categoriesRes] = await Promise.all([
     getEntities({
       type_id: params.type_id,
       is_active: params.is_active,
@@ -31,6 +33,7 @@ export default async function EntitiesPage({ searchParams }: PageProps) {
       per_page: 15,
     }),
     getEntityTypes(),
+    getCategories(),
   ])
 
   const canManage = user.permissions.includes('entities.manage')
@@ -39,12 +42,14 @@ export default async function EntitiesPage({ searchParams }: PageProps) {
     <AppLayout
       user={user}
       active="/entities"
-      title="Directorio de Entidades"
-      subtitle="Organizaciones comunitarias, comedores, iglesias, personas y proveedores."
+      title="Entidades y Categorías"
+      subtitle="Administrá las organizaciones beneficiarias, proveedores y los rubros de fondos."
     >
-      <EntitiesView
-        initialData={entitiesData}
+      <EntitiesAndCategoriesTabs
+        initialTab={params.tab || 'entities'}
+        entitiesData={entitiesData}
         entityTypes={entityTypesRes.data || []}
+        categories={categoriesRes.data || []}
         canManage={canManage}
       />
     </AppLayout>

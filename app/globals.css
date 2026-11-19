@@ -161,3 +161,27 @@
     @apply bg-background text-foreground;
   }
 }
+
+/* Scrollbars modernas y elegantes para modales y tablas */
+.custom-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: #cbdad5 transparent;
+}
+
+.custom-scrollbar::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background-color: #cbdad5;
+  border-radius: 9999px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background-color: #0d6b5e;
+}

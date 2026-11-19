@@ -3,6 +3,8 @@
 import { useState } from 'react'
 import { User } from '@/types/api'
 import { Sidebar } from './sidebar'
+import { BottomNav } from './bottom-nav'
+import { PwaInstaller } from '@/components/pwa/pwa-installer'
 import { Bell, ChevronDown, Menu, Search } from 'lucide-react'
 
 interface AppLayoutProps {
@@ -61,6 +63,8 @@ export function AppLayout({
           </div>
 
           <div className="flex items-center gap-2 sm:gap-4">
+            <PwaInstaller />
+
             <button
               aria-label="Notificaciones"
               className="relative rounded-xl p-2.5 text-[#71827e] hover:bg-[#f3f7f5]"
@@ -81,7 +85,7 @@ export function AppLayout({
         </header>
 
         {/* Contenido principal */}
-        <div className="mx-auto max-w-[1440px] px-5 py-8 sm:px-8 lg:px-10">
+        <div className="mx-auto max-w-[1440px] px-5 py-8 pb-24 sm:px-8 sm:pb-8 lg:px-10">
           <div className="mb-8 flex flex-col justify-between gap-5 sm:flex-row sm:items-end">
             <div>
               <h1 className="text-[30px] font-bold tracking-[-0.03em] text-[#1e3934]">{title}</h1>
@@ -93,6 +97,8 @@ export function AppLayout({
           {children}
         </div>
       </main>
+
+      <BottomNav user={user} active={active} />
     </div>
   )
 }
