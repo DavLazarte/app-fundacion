@@ -16,15 +16,10 @@ interface PageProps {
 }
 
 export default async function ReportsPage({ searchParams }: PageProps) {
-  const user = await getMe()
-
-  if (!user) {
-    redirect('/login')
-  }
-
   const params = await searchParams
 
-  const [summaryData, catalogs] = await Promise.all([
+  const [user, summaryData, catalogs] = await Promise.all([
+    getMe(),
     getReportSummary({
       from: params.from,
       to: params.to,
@@ -34,6 +29,10 @@ export default async function ReportsPage({ searchParams }: PageProps) {
     }),
     getMovementCatalogs(),
   ])
+
+  if (!user) {
+    redirect('/login')
+  }
 
   const canExport = user.permissions.includes('reports.export')
 

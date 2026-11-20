@@ -16,15 +16,10 @@ interface PageProps {
 }
 
 export default async function EntitiesPage({ searchParams }: PageProps) {
-  const user = await getMe()
-
-  if (!user) {
-    redirect('/login')
-  }
-
   const params = await searchParams
 
-  const [entitiesData, entityTypesRes, categoriesRes] = await Promise.all([
+  const [user, entitiesData, entityTypesRes, categoriesRes] = await Promise.all([
+    getMe(),
     getEntities({
       type_id: params.type_id,
       is_active: params.is_active,
@@ -35,6 +30,10 @@ export default async function EntitiesPage({ searchParams }: PageProps) {
     getEntityTypes(),
     getCategories(),
   ])
+
+  if (!user) {
+    redirect('/login')
+  }
 
   const canManage = user.permissions.includes('entities.manage')
 

@@ -21,17 +21,12 @@ interface PageProps {
 }
 
 export default async function MovementsPage({ searchParams }: PageProps) {
-  const user = await getMe()
-
-  if (!user) {
-    redirect('/login')
-  }
-
   const params = await searchParams
   const isAccountabilitiesTab = params.tab === 'accountabilities'
 
-  const [movementsData, accountabilitiesData, catalogs, currentBalance] =
+  const [user, movementsData, accountabilitiesData, catalogs, currentBalance] =
     await Promise.all([
+      getMe(),
       getMovements({
         from: params.from,
         to: params.to,
@@ -79,6 +74,10 @@ export default async function MovementsPage({ searchParams }: PageProps) {
       getMovementCatalogs(),
       getGeneralFundBalance(),
     ])
+
+  if (!user) {
+    redirect('/login')
+  }
 
   const canCreate = user.permissions.includes('movements.create')
   const canVoid = user.permissions.includes('movements.void')

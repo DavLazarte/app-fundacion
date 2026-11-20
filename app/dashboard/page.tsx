@@ -10,17 +10,13 @@ import { ArrowDownLeft, ArrowUpRight, FileCheck2, Landmark } from 'lucide-react'
 import { redirect } from 'next/navigation'
 
 export default async function DashboardPage() {
-  const user = await getMe()
+  const [user, metrics] = await Promise.all([
+    getMe(),
+    getDashboardMetrics().catch(() => null),
+  ])
 
   if (!user) {
     redirect('/login')
-  }
-
-  let metrics = null
-  try {
-    metrics = await getDashboardMetrics()
-  } catch (err) {
-    // Si la API no está disponible o da error
   }
 
   const generalAvailable = metrics?.general_available ?? '0.00'
