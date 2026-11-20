@@ -24,7 +24,9 @@ export async function getEntities(
  * Obtener listado de tipos de entidad activos.
  */
 export async function getEntityTypes(): Promise<{ data: EntityType[] }> {
-  return serverFetch<{ data: EntityType[] }>('/entity-types?is_active=1')
+  return serverFetch<{ data: EntityType[] }>('/entity-types?is_active=1', {
+    next: { revalidate: 300 },
+  })
 }
 
 /**

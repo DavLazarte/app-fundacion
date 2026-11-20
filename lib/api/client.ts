@@ -17,6 +17,10 @@ export class ApiError extends Error {
 
 interface FetchOptions extends RequestInit {
   params?: Record<string, string | number | boolean | null | undefined>
+  next?: {
+    revalidate?: number | false
+    tags?: string[]
+  }
 }
 
 /**
@@ -59,11 +63,17 @@ export async function serverFetch<T>(
     headers['Authorization'] = `Bearer ${token}`
   }
 
-  const response = await fetch(url, {
+  const fetchOptions: RequestInit & { next?: any } = {
     ...options,
     headers,
-    cache: options.cache ?? 'no-store', // Por defecto datos en tiempo real de tesorería
-  })
+  }
+
+  // Si no se especificó cache ni revalidación de Next.js, por defecto es no-store para datos en vivo
+  if (!options.cache && !options.next) {
+    fetchOptions.cache = 'no-store'
+  }
+
+  const response = await fetch(url, fetchOptions)
 
   // Si es un archivo binario (PDF o XLSX)
   const contentType = response.headers.get('content-type') || ''

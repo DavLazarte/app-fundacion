@@ -67,6 +67,8 @@ export function NewAccountabilityModal({
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
+    if (!movement) return
+
     if (!description.trim()) {
       setError('El detalle explicativo de los gastos es obligatorio.')
       return

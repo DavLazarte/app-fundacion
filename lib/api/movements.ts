@@ -47,9 +47,15 @@ export async function getMovementCatalogs(): Promise<{
   entityTypes: EntityType[]
 }> {
   const [categoriesRes, entitiesRes, entityTypesRes] = await Promise.all([
-    serverFetch<{ data: Category[] }>('/categories?is_active=1'),
-    serverFetch<{ data: Entity[] }>('/entities?is_active=1&per_page=100'),
-    serverFetch<{ data: EntityType[] }>('/entity-types?is_active=1'),
+    serverFetch<{ data: Category[] }>('/categories?is_active=1', {
+      next: { revalidate: 60 },
+    }),
+    serverFetch<{ data: Entity[] }>('/entities?is_active=1&per_page=100', {
+      next: { revalidate: 60 },
+    }),
+    serverFetch<{ data: EntityType[] }>('/entity-types?is_active=1', {
+      next: { revalidate: 300 },
+    }),
   ])
 
   return {

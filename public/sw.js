@@ -1,5 +1,5 @@
 // Service Worker para PWA Tesorería
-const SW_VERSION = 'v1.2.2-fast';
+const SW_VERSION = 'v1.3.0-fast-20261120';
 const CACHE_NAME = `tesoreria-cache-${SW_VERSION}`;
 
 self.addEventListener('install', (event) => {

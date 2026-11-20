@@ -55,7 +55,7 @@ export function MovementsAndAccountabilitiesTabs({
           <ArrowLeftRight className="size-4" />
           <span>Libro de Movimientos</span>
           <span className="rounded-full bg-[#edf4f1] px-2 py-0.5 text-xs font-semibold text-[#5a736c]">
-            {movementsData.meta.total}
+            {movementsData.meta?.total ?? movementsData.data.length}
           </span>
         </button>
 
@@ -70,7 +70,7 @@ export function MovementsAndAccountabilitiesTabs({
           <FileCheck2 className="size-4" />
           <span>Rendiciones de Cuentas</span>
           <span className="rounded-full bg-[#edf4f1] px-2 py-0.5 text-xs font-semibold text-[#5a736c]">
-            {accountabilitiesData.meta.total}
+            {accountabilitiesData.meta?.total ?? accountabilitiesData.data.length}
           </span>
         </button>
       </div>

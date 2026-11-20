@@ -1,11 +1,14 @@
+import { cache } from 'react'
 import { serverFetch } from '@/lib/api/client'
 import { User } from '@/types/api'
 
-export async function getMe(): Promise<User | null> {
+export const getMe = cache(async (): Promise<User | null> => {
   try {
-    const data = await serverFetch<{ user: User }>('/me')
+    const data = await serverFetch<{ user: User }>('/me', {
+      next: { revalidate: 30 },
+    })
     return data.user
   } catch {
     return null
   }
-}
+})

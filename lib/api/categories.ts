@@ -7,5 +7,6 @@ export async function getCategories(params?: {
 }): Promise<{ data: (Category & { movements_count?: number })[] }> {
   return serverFetch<{ data: (Category & { movements_count?: number })[] }>('/categories', {
     params: params as Record<string, string | number | boolean>,
+    next: { revalidate: 60 },
   })
 }

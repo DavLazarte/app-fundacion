@@ -29,6 +29,7 @@ export function VoidMovementModal({
 
   async function handleVoid(e: React.FormEvent) {
     e.preventDefault()
+    if (!movement) return
     setError(null)
     setLoading(true)
 

@@ -6,6 +6,7 @@ import { Movement, MovementAccountability, PaginatedResponse } from '@/types/api
 import { formatCurrency, formatDate } from '@/lib/format'
 import { Button } from '@/components/ui/button'
 import { MovementDetailModal } from './movement-detail-modal'
+import { VoidMovementModal } from './void-movement-modal'
 import {
   ArrowDownLeft,
   Calendar,
@@ -33,6 +34,7 @@ export function AccountabilitiesView({
   const [q, setQ] = useState(searchParams.get('q') || '')
   const [selectedMovement, setSelectedMovement] = useState<Movement | null>(null)
   const [detailModalOpen, setDetailModalOpen] = useState(false)
+  const [voidTarget, setVoidTarget] = useState<Movement | null>(null)
 
   function handleSearch(e: React.FormEvent) {
     e.preventDefault()
@@ -78,7 +80,7 @@ export function AccountabilitiesView({
         </form>
 
         <p className="text-xs text-[#71827e]">
-          Total rendiciones registradas: <strong>{pagination.total}</strong>
+          Total rendiciones registradas: <strong>{pagination?.total ?? items.length}</strong>
         </p>
       </div>
 
@@ -267,7 +269,7 @@ export function AccountabilitiesView({
             </div>
 
             {/* Paginación */}
-            {pagination.last_page > 1 && (
+            {pagination && pagination.last_page > 1 && (
               <div className="flex items-center justify-between border-t border-[#edf1ef] px-6 py-3 text-xs text-[#71827e]">
                 <span>
                   Página {pagination.current_page} de {pagination.last_page} ({pagination.total} rendiciones)
@@ -309,13 +311,24 @@ export function AccountabilitiesView({
             setDetailModalOpen(false)
             setSelectedMovement(null)
           }}
-          onSuccess={() => {
+          onVoidClick={(m) => {
             setDetailModalOpen(false)
             setSelectedMovement(null)
-            router.refresh()
+            setVoidTarget(m)
           }}
         />
       )}
+
+      {/* Modal para anular si el usuario confirma */}
+      <VoidMovementModal
+        movement={voidTarget}
+        isOpen={voidTarget !== null}
+        onClose={() => setVoidTarget(null)}
+        onSuccess={() => {
+          setVoidTarget(null)
+          router.refresh()
+        }}
+      />
     </div>
   )
 }

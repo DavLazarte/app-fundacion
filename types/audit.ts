@@ -1,3 +1,5 @@
+import { User } from './api'
+
 export interface Role {
   id: number
   name: string

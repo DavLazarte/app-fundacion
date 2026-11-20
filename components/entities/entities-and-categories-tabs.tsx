@@ -40,7 +40,7 @@ export function EntitiesAndCategoriesTabs({
           <Building2 className="size-4" />
           <span>Entidades y Destinatarios</span>
           <span className="rounded-full bg-[#edf4f1] px-2 py-0.5 text-xs font-semibold text-[#5a736c]">
-            {entitiesData.meta.total}
+            {entitiesData.meta?.total ?? entitiesData.data.length}
           </span>
         </button>
 
