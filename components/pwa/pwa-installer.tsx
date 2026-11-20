@@ -31,11 +31,12 @@ export function PwaInstaller() {
           console.error('Service Worker registration error:', err)
         })
 
-      // Cuando el nuevo Service Worker toma el control (claim tras skipWaiting),
-      // recargar la aplicación automáticamente para aplicar el nuevo código sin Alt+F5
+      // Solo recargar si ya había un Service Worker previo y se actualizó a uno nuevo
       let refreshing = false
+      const hadController = Boolean(navigator.serviceWorker.controller)
+
       const handleControllerChange = () => {
-        if (!refreshing) {
+        if (hadController && !refreshing) {
           refreshing = true
           window.location.reload()
         }

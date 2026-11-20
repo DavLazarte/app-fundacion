@@ -1,7 +1,7 @@
 import { getMe } from '@/lib/api/auth'
 import { getMovements, getMovementCatalogs } from '@/lib/api/movements'
 import { getAccountabilities } from '@/lib/api/accountabilities'
-import { getDashboardMetrics } from '@/lib/api/dashboard'
+import { getGeneralFundBalance } from '@/lib/api/funds'
 import { AppLayout } from '@/components/layout/app-layout'
 import { MovementsAndAccountabilitiesTabs } from '@/components/movements/movements-and-accountabilities-tabs'
 import { redirect } from 'next/navigation'
@@ -28,8 +28,9 @@ export default async function MovementsPage({ searchParams }: PageProps) {
   }
 
   const params = await searchParams
+  const isAccountabilitiesTab = params.tab === 'accountabilities'
 
-  const [movementsData, accountabilitiesData, catalogs, dashboardData] =
+  const [movementsData, accountabilitiesData, catalogs, currentBalance] =
     await Promise.all([
       getMovements({
         from: params.from,
@@ -42,29 +43,43 @@ export default async function MovementsPage({ searchParams }: PageProps) {
         page: params.page ? parseInt(params.page) : 1,
         per_page: 15,
       }),
-      getAccountabilities({
-        q: params.q,
-        page: params.page ? parseInt(params.page) : 1,
-        per_page: 15,
-      }).catch(() => ({
-        data: [],
-        links: { first: '', last: '', prev: null, next: null },
-        meta: {
-          current_page: 1,
-          from: 0,
-          last_page: 1,
-          links: [],
-          path: '',
-          per_page: 15,
-          to: 0,
-          total: 0,
-        },
-      })),
+      isAccountabilitiesTab
+        ? getAccountabilities({
+            q: params.q,
+            page: params.page ? parseInt(params.page) : 1,
+            per_page: 15,
+          }).catch(() => ({
+            data: [],
+            links: { first: '', last: '', prev: null, next: null },
+            meta: {
+              current_page: 1,
+              from: 0,
+              last_page: 1,
+              links: [],
+              path: '',
+              per_page: 15,
+              to: 0,
+              total: 0,
+            },
+          }))
+        : Promise.resolve({
+            data: [],
+            links: { first: '', last: '', prev: null, next: null },
+            meta: {
+              current_page: 1,
+              from: 0,
+              last_page: 1,
+              links: [],
+              path: '',
+              per_page: 15,
+              to: 0,
+              total: 0,
+            },
+          }),
       getMovementCatalogs(),
-      getDashboardMetrics().catch(() => null),
+      getGeneralFundBalance(),
     ])
 
-  const currentBalance = dashboardData?.general_available || '0.00'
   const canCreate = user.permissions.includes('movements.create')
   const canVoid = user.permissions.includes('movements.void')
 
